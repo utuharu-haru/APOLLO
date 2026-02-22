@@ -1,0 +1,169 @@
+/**/
+h1 {
+    color: #ffffff;
+    background-color: #00aeff;
+    font-size: 28px;
+    padding: 12px;
+}
+
+.menu{
+    font-size: 20px;
+    padding: 12px;
+}
+
+.menu-container {
+    display: flex;
+    flex-direction: column;
+    padding-left: 12px;
+}
+
+.menu-container li::before{
+    content: "・";
+}
+
+li{
+    margin-bottom: 8px;
+}
+
+/* リンク文字のデザイン */
+.nav-link {
+    color: #0066cc;          /* リンクらしい青色 */
+    text-decoration: underline; /* 常に下線を引く */
+    transition: all 0.2s;    /* 変化を滑らかに */
+    cursor: pointer;
+}
+
+/* マウスを乗せた時の変化 */
+.nav-link:hover {
+    text-decoration-thickness: 2px; /* 下線を少し太くする */
+}
+
+footer {
+    margin-top: 20px;
+    font-size: 0.8em;
+    color: #888;
+    text-align: center;
+}
+
+.container {
+    margin-bottom: 20px;
+}
+
+/* 表の親要素にスクロールを設定 */
+.dataTables_wrapper {
+    width: 100%;
+    overflow-x: auto; /* 横スクロールを出す */
+    -webkit-overflow-scrolling: touch;
+}
+
+table.dataTable {
+    width: 100% !important;
+    white-space: nowrap; /* ★重要：列が増えても文字が重ならず、横に伸びるようにする */
+    border-collapse: collapse !important;
+}
+
+th, td {
+    text-align: center !important;
+    padding: 10px 15px !important;
+    border: 1px solid #ddd !important;
+}
+
+/* 昇順・降順ボタン（矢印）が見やすくなるよう、見出しに少し隙間を作る */
+table.dataTable thead th {
+    padding-right: 30px !important; 
+    background-color: #f8f9fa;
+}
+
+/* 検索ボックス（絞り込み）を左側に寄せる */
+.dataTables_wrapper .dataTables_filter {
+    float: left !important;    /* 右から左へ強制移動 */
+    text-align: left !important;
+    margin-bottom: 15px;      /* 表との間に少し隙間を作る */
+}
+
+/* 検索ボックス内の入力欄と文字を調整 */
+.dataTables_filter input {
+    margin-left: 0.5em;       /* 「検索:」の文字との隙間 */
+}
+
+.table{
+    margin: 20px;
+}
+
+.back-top{
+    display: inline-block;
+    margin: 20px;
+    margin-bottom: 0px;
+}
+
+/* --- 先頭列（名前の列）を固定する設定 --- */
+
+/* 1列目の見出し(th)と中身(td)を固定 */
+#attendanceTable th:first-child,
+#attendanceTable td:first-child {
+    position: sticky;
+    left: 0;                /* 左端に固定 */
+    background-color: #fff; /* 背景を白にして後ろの文字が透けないようにする */
+    z-index: 2;             /* 他のセルより前面に出す */
+    border-right: 2px solid #ddd !important; /* 境界線を太くして区切りを明確にする */
+}
+
+/* ヘッダーの1列目だけは、さらに上の階層(z-index)にする（スクロール時の重なり防止） */
+#attendanceTable th:first-child {
+    z-index: 3;
+    background-color: #f8f9fa; /* ヘッダーの色に合わせる */
+}
+
+/* 表全体の崩れを防ぐ */
+#attendanceTable {
+    border-collapse: separate !important; /* stickyを使う時に必要 */
+    border-spacing: 0;
+}
+
+/* 絞り込み（検索ボックス）を左側に固定する */
+.dataTables_wrapper .dataTables_filter {
+    position: sticky;
+    left: 0px;          /* 画面左端からの距離 */
+    z-index: 100;        /* 表のデータよりも前面に表示 */
+    float: left !important;
+    background-color: white; /* スクロールした時に後ろの文字と重なって見えないようにする */
+}
+
+/* カレンダーの外枠 */
+.calendar-container {
+    max-width: 1000px;
+    margin: 0px auto;
+    padding: 20px;
+}
+
+/* 戻るボタン（出席表と統一） */
+.back-link {
+    display: inline-block;
+    margin-bottom: 20px;
+    text-decoration: none;
+    color: #007bff;
+    font-weight: bold;
+}
+
+/* スマホでカレンダーがはみ出さないためのラッパー */
+.iframe-wrapper {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+/* 画面サイズに合わせて高さを調整（PC用） */
+.iframe-wrapper iframe {
+    min-height: 600px;
+}
+
+/* スマホ用の調整 */
+@media (max-width: 600px) {
+    .iframe-wrapper iframe {
+        min-height: 400px;
+    }
+}
