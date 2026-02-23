@@ -15,8 +15,6 @@
 
     <link rel="stylesheet" href="https://cdn.datatables.net/fixedcolumns/4.3.0/css/fixedColumns.dataTables.min.css">
 
-    <script src="https://cdn.datatables.net/fixedcolumns/4.3.0/js/dataTables.fixedColumns.min.js"></script>
-
     <meta name="robots" content="noindex, nofollow">
 
 </head>
@@ -28,7 +26,11 @@
             <p><a href="index.html" class="nav-link back-top">← トップページへ戻る</a></p>
         </header>
 
-        <main class="table">
+        <div id="loading" style="text-align: center; padding: 50px; font-weight: bold; color: #666;">
+            <div class="spinner"></div> <p>データを取得中...<br>しばらくお待ちください</p>
+        </div>
+
+        <main class="table" id="tableContent" style="display: none;">
             <table id="attendanceTable" class="display cell-border stripe">
                 <thead>
                     <tr id="tableHead">
@@ -42,7 +44,8 @@
 
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-
+    <script src="https://cdn.datatables.net/fixedcolumns/4.3.0/js/dataTables.fixedColumns.min.js"></script>
+    
     <script src="table.js"></script>
 
     <footer>

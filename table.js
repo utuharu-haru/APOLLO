@@ -1,78 +1,96 @@
-const API_KEY = 'AIzaSyDKCLnMuf79ncOrfS6i8q2aALaolon0oOk';
-const SPREAD_SHEET_ID = '1kF65q3nayO6Dhbpsg4AeI3OiWZ8hqQwqcBII6v35wtc';
-const RANGE = 'シート1!A1:ZZ'; 
+// 1. GASのウェブアプリURL（デプロイして取得したもの）
+const GAS_URL = "https://script.google.com/macros/s/AKfycbxWgoesW2bX8IXAseNpK0p-3Nd_12u34lxJXhp5033d4uVxyO0o9vnCNp3p_kLnKaWgvA/exec";
 
-const url = `https://sheets.googleapis.com/v4/spreadsheets/${SPREAD_SHEET_ID}/values/${RANGE}?key=${API_KEY}`;
+async function loadTableData() {
+    // 2. auth.jsで保存したパスワードを取得
+    const pass = sessionStorage.getItem('user_password');
 
-async function loadTable() {
+    if (!pass) {
+        alert("認証が必要です。");
+        location.href = "index.html"; // パスワード入力画面へ戻す
+        return;
+    }
+
     try {
-        const response = await fetch(url);
-        const result = await response.json();
-        const data = result.values;
+        // 3. GASに「パスワード」をパラメータとして付けてリクエスト
+        // fetchのURL末尾に ?pass=... を追加します
+        const response = await fetch(`${GAS_URL}?pass=${encodeURIComponent(pass)}`);
+        const data = await response.json();
 
-        if (!data) {
-            console.error("データが見つかりません。");
+        // 4. GAS側で認証エラーが返ってきた場合
+        if (data.error) {
+            alert("認証エラー: パスワードが正しくないか、セッションが切れました。");
+            sessionStorage.removeItem('user_password');
+            location.href = "index.html";
             return;
         }
 
-        const header = data[0]; 
-        const rows = data.slice(1);
+        document.getElementById('loading').style.display = 'none';    // 読み込み中を隠す
+        document.getElementById('tableContent').style.display = 'block'; // 表を表示する
 
-        // ヘッダー生成
-        const headRow = document.getElementById('tableHead');
-        header.forEach(h => {
-            const th = document.createElement('th');
-            th.textContent = h;
-            headRow.appendChild(th);
-        });
-
-        // 中身生成
-        const tbody = document.getElementById('tableBody');
-        tbody.innerHTML = "";
-        rows.forEach(row => {
-            // 【修正ポイント】行のすべてのセルを合体させて、中身が空（""）じゃないかチェック
-            // これにより、データが入っていない行を完全にスキップします
-            const rowText = row.join("").trim();
-            if (rowText === "") return; 
-
-            const tr = document.createElement('tr');
-            row.forEach(cell => {
-                const td = document.createElement('td');
-                td.textContent = cell || ""; 
-                tr.appendChild(td);
-            });
-            tbody.appendChild(tr);
-        });
-
-        // DataTablesの有効化（jQueryを使用）
-        $('#attendanceTable').DataTable({
-            paging: false,
-            searching: true,
-            scrollX: false,
-            info: false,
-            scrollCollapse: true,
-            autoWidth: false,
-            order: [[header.length - 1, 'desc']],
-            language: {
-                search: "名前で絞り込み:"
-            },
-            // ★ここから追加：表の準備ができた瞬間に実行される命令
-            initComplete: function() {
-                // 「dataTables_scrollSpanning」や「空のtr」を強制的に排除する
-                $('.dataTables_scrollBody thead tr').css({visibility:'collapse', height:0});
-                // 万が一中身が空のtdがあったらその親のtrを消す
-                $('#attendanceTable tbody tr').each(function() {
-                    if ($(this).text().trim() === "") {
-                        $(this).remove();
-                    }
-                });
-            }
-        });
+        // 5. 成功したら表を作成する関数を呼ぶ
+        // GASから [ [A1, B1], [A2, B2] ] の形式で届くことを想定
+        createTable(data);
 
     } catch (error) {
-        console.error("読み込みエラー:", error);
+        console.error("データ取得失敗:", error);
+        alert("データの読み込みに失敗しました。");
     }
 }
 
-// ページが読み込まれたら実行
-window.onload = loadTable;
+// HTMLの表（table）を生成する関数
+function createTable(rows) {
+    const tableHead = document.getElementById('tableHead');
+    const tableBody = document.getElementById('tableBody');
+
+    // 1. ヘッダーの作成
+    if (tableHead && rows.length > 0) {
+        tableHead.innerHTML = "";
+        rows[0].forEach(headerText => {
+            const th = document.createElement('th');
+            th.textContent = headerText;
+            tableHead.appendChild(th);
+        });
+    }
+
+    // 2. ボディの作成
+    if (!tableBody) return;
+    tableBody.innerHTML = ""; 
+
+    rows.forEach((row, index) => {
+        if (index === 0) return;
+        const tr = document.createElement('tr');
+        row.forEach(cell => {
+            const td = document.createElement('td');
+            td.textContent = cell;
+            tr.appendChild(td);
+        });
+        tableBody.appendChild(tr);
+    });
+
+    // --- ここからが重要！ DataTablesの有効化 ---
+    
+    // すでにDataTablesが動いている場合は、一度破棄してから再設定する
+    if ($.fn.DataTable.isDataTable('#attendanceTable')) {
+        $('#attendanceTable').DataTable().destroy();
+    }
+
+    const lastColumnIndex = rows[0].length - 1;
+
+    $('#attendanceTable').DataTable({
+        "order": [[ lastColumnIndex, "desc" ]], 
+        "paging": false,
+        "searching": true,
+        "info": false,
+        "scrollX": false,
+        "autoWidth": false,
+        "deferRender": true,
+        "language": {
+            "search": "名前を検索:",
+            "zeroRecords": "一致するデータが見つかりません"
+        }
+    });
+}
+
+// ページ読み込み時に実行
+window.onload = loadTableData;
