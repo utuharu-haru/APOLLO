@@ -1,4 +1,4 @@
-const GAS_URL = "https://script.google.com/macros/s/AKfycbxs6qRxshTbOzju7Qc4AVkto6LV-hcj86pJt1G9YlNDFR06TY76eHdApDT2BaUPNAARLg/exec";
+const GAS_URL = "https://script.google.com/macros/s/AKfycbzYpDOwRlr8vqMKGdURMqjZvZdA4wMnh2P6gKLZWAntdXzoaUqa1JoOweoAfgEism9aLA/exec";
 
 async function loadSchedule() {
     const pass = sessionStorage.getItem('user_password');

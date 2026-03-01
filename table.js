@@ -1,5 +1,5 @@
 // 1. GASのウェブアプリURL（デプロイして取得したもの）
-const GAS_URL = "https://script.google.com/macros/s/AKfycbxs6qRxshTbOzju7Qc4AVkto6LV-hcj86pJt1G9YlNDFR06TY76eHdApDT2BaUPNAARLg/exec";
+const GAS_URL = "https://script.google.com/macros/s/AKfycbzYpDOwRlr8vqMKGdURMqjZvZdA4wMnh2P6gKLZWAntdXzoaUqa1JoOweoAfgEism9aLA/exec";
 
 async function loadTableData() {
     // 2. auth.jsで保存したパスワードを取得
